@@ -1,14 +1,21 @@
-import { useState, ChangeEvent } from "react"
-import { Activity } from "../types"
+import { useState, ChangeEvent, FormEvent, Dispatch } from "react"
+import type { Activity } from "../types"
 import { categories } from "../data/categories"
+import { ActivityActions } from "../reducers/activity-reducer"
 
-export default function Form() {
+type FormProps = {
+    dispatch: Dispatch<ActivityActions>
+}
 
-    const [activity, setActivity] = useState<Activity>({
-        category: 1,
-        name: '',
-        calories: 0
-    })
+const initialState = {
+    category: 1,
+    name: '',
+    calories: 0
+}
+
+export default function Form({ dispatch }: FormProps) {
+
+    const [activity, setActivity] = useState<Activity>(initialState)
 
     const handleChange = (e: ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) => {
         const isNumberField = ['category', 'calories'].includes(e.target.id)
@@ -24,8 +31,15 @@ export default function Form() {
         return name.trim() !== '' && calories > 0
     }
 
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        dispatch({ type: 'save-activity', payload: { newActivity: activity } })
+        setActivity(initialState)
+    }
+
     return (
-        <form className="space-y-5 bg-white shadow p-10 rounded-lg">
+        <form className="space-y-5 bg-white shadow p-10 rounded-lg" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-3">
                 <label htmlFor="category" className="font-bold">Categoría:</label>
                 <select
