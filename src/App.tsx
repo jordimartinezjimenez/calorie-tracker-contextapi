@@ -1,12 +1,12 @@
-import { useReducer, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import Form from "./components/Form"
-import { activityReducer, initialState } from "./reducers/activity-reducer"
 import ActivityList from "./components/ActivityList"
 import CalorieTracker from "./components/CalorieTracker"
+import { useActivity } from "./hooks/useActivity"
 
 function App() {
 
-  const [state, dispatch] = useReducer(activityReducer, initialState)
+  const { state, dispatch } = useActivity()
 
   useEffect(() => {
     localStorage.setItem('activities', JSON.stringify(state.activities))
@@ -16,38 +16,30 @@ function App() {
 
   return (
     <>
-      <header className="bg-slate-600 py-3">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h1 className="text-center text-lg font-bold text-white uppercase">Contador de Calorias</h1>
+      <header className="py-3 bg-slate-600">
+        <div className="flex items-center justify-between max-w-4xl mx-auto">
+          <h1 className="text-lg font-bold text-center text-white uppercase">Contador de Calorias</h1>
           <button
-            className="bg-gray-300 hover:bg-gray-400 p-2 font-bold uppercase text-slate-700 cursor-pointer rounded-lg text-sm disabled:opacity-10"
+            className="p-2 text-sm font-bold uppercase bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400 text-slate-700 disabled:opacity-10"
             disabled={!canResetApp()}
             onClick={() => dispatch({ type: 'reset-app' })}
           >Reiniciar App</button>
         </div>
       </header>
-      <section className="bg-slate-500 py-20 px-5">
+      <section className="px-5 py-20 bg-slate-500">
         <div className="max-w-4xl mx-auto">
-          <Form
-            dispatch={dispatch}
-            state={state}
-          />
+          <Form />
         </div>
       </section>
 
-      <section className="bg-slate-800 py-10">
+      <section className="py-10 bg-slate-800">
         <div className="max-w-4xl mx-auto">
-          <CalorieTracker
-            activities={state.activities}
-          />
+          <CalorieTracker />
         </div>
       </section>
 
-      <section className="p-10 mx-auto max-w-4xl">
-        <ActivityList
-          activities={state.activities}
-          dispatch={dispatch}
-        />
+      <section className="max-w-4xl p-10 mx-auto">
+        <ActivityList />
       </section>
     </>
   )
